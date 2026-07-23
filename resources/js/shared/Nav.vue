@@ -20,6 +20,11 @@ import NavLink from '@/shared/NavLink.vue';
                     Settings
                 </NavLink>
             </li>
+            <li>
+                <NavLink method="post" href="/logout" class="cursor-pointer">
+                    Log Out
+                </NavLink>
+            </li>
         </ul>
     </nav>
 </template>
