@@ -1,7 +1,9 @@
-<script setup lang="ts">
+<script setup>
 import { Head, Link, router } from '@inertiajs/vue3';
 import debounce from "lodash/debounce"
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
+import { usePage } from '@inertiajs/vue3';
+import { useCurrentUser } from '@/composables/useCurrentUser';
 import Pagination from '@/shared/Pagination.vue';
 
 const { users, filters } = defineProps({
@@ -11,6 +13,8 @@ const { users, filters } = defineProps({
 });
 
 const search = ref(filters.search);
+
+const page = usePage();
 
 watch(search, debounce((value) => {
     router.get(
@@ -23,6 +27,12 @@ watch(search, debounce((value) => {
         },
     );
 }), 500);
+
+onMounted(() => {
+    const { user } = useCurrentUser()
+
+    console.log(user)
+})
 </script>
 
 <template>
@@ -55,8 +65,9 @@ watch(search, debounce((value) => {
             <tbody class="divide-y divide-gray-200 border-t border-gray-200">
                 <tr
                     v-for="user in users.data"
+                    @click="router.get(`/users/${user.id}`)"
                     :key="user.id"
-                    class="hover:bg-gray-50"
+                    class="hover:bg-gray-50 cursor-pointer"
                 >
                     <td class="px-6 py-4 font-medium text-gray-900">
                         {{ user.name }}
@@ -74,5 +85,5 @@ watch(search, debounce((value) => {
         </table>
     </div>
 
-    <Pagination :links="users.links" class="mt-6" />
+    <Pagination :links="users.meta.links" class="mt-6" />
 </template>

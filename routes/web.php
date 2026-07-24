@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\UserController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -13,27 +14,8 @@ Route::middleware('auth')->group(function () {
         'username' => 'iplacinta',
     ])->name('home');
 
-    Route::get('/users', function () {
-        return Inertia::render('Users/Index', [
-            'users' => User::query()
-                ->when(Request::input('search'), function ($query, $search) {
-                    $query->where('name', 'like', "%{$search}%");
-                })
-                ->paginate(10)
-                ->withQueryString()
-                ->through(fn ($user) => [
-                    'id' => $user->id,
-                    'name' => $user->name,
-                    'can' => [
-                        'edit' => Auth::user()->can('edit', $user),
-                    ]
-                ]),
-            'filters' => Request::only(['search']),
-            'can' => [
-                'createUser' => Auth::user()->can('create', User::class),
-            ]
-        ]);
-    })->name('users');
+    Route::get('/users', [UserController::class, 'index'])->name('users');
+    Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
 
     Route::inertia('/users/create', 'Users/Create')->can('create', User::class)->name('users.create');
 
