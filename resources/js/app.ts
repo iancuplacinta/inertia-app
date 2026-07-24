@@ -14,7 +14,11 @@ createInertiaApp({
         switch (true) {
             case name === 'AuthNew/Login':
                 return null;
-            case ['Home', 'Users/Index', 'Users/Create', 'Settings'].includes(name):
+            case ['Home', 'Settings'].includes(
+                name,
+            ):
+                return layout;
+            case name.startsWith('Users/'):
                 return layout;
             case name.startsWith('auth/'):
                 return AuthLayout;
